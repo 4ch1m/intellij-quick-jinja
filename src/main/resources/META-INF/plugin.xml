@@ -1,0 +1,37 @@
+<idea-plugin require-restart="true">
+    <id>de.achimonline.quickjinja</id>
+    <name>Quick Jinja</name>
+
+    <vendor
+            email="intellij@achimonline.de"
+            url="https://www.achimonline.de">
+        Achim Seufert
+    </vendor>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationConfigurable
+                id="de.achimonline.quickjinja.settings.QuickJinjaAppSettingsConfigurable"
+                parentId="tools"
+                key="settings.display.name"
+                instance="de.achimonline.quickjinja.settings.QuickJinjaAppSettingsConfigurable"/>
+
+        <applicationService serviceImplementation="de.achimonline.quickjinja.settings.QuickJinjaAppSettingsState"/>
+
+        <!--suppress PluginXmlCapitalization -->
+        <notificationGroup
+                id="Quick Jinja"
+                displayType="BALLOON"
+                key="notifications.group.title"/>
+
+        <toolWindow
+                id="Quick Jinja"
+                icon="/icons/toolbar.svg"
+                secondary="true"
+                anchor="right"
+                factoryClass="de.achimonline.quickjinja.toolwindow.QuickJinjaToolWindowFactory"/>
+    </extensions>
+
+    <resource-bundle>messages.QuickJinjaBundle</resource-bundle>
+</idea-plugin>
