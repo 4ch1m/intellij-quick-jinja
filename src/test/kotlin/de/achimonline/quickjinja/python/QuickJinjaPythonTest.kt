@@ -40,7 +40,7 @@ class QuickJinjaPythonTest {
             except:
                 ...
             
-            with (open('${templateFile.path}') as template_file):
+            with (open(r'${templateFile.path}') as template_file):
                 template = template_file.read()
 
             data = {}
@@ -74,10 +74,10 @@ class QuickJinjaPythonTest {
             except:
                 ...
             
-            with (open('${templateFile.path}') as template_file):
+            with (open(r'${templateFile.path}') as template_file):
                 template = template_file.read()
             
-            with (open('${dataFile}') as data_file):
+            with (open(r'${dataFile}') as data_file):
                 data = json.load(data_file)
             
             try:
@@ -120,10 +120,10 @@ class QuickJinjaPythonTest {
             except:
                 ...
             
-            with (open('${templateFile.path}') as template_file):
+            with (open(r'${templateFile.path}') as template_file):
                 template = template_file.read()
             
-            with (open('${dataFile}') as data_file):
+            with (open(r'${dataFile}') as data_file):
                 data = json.load(data_file)
             
             try:

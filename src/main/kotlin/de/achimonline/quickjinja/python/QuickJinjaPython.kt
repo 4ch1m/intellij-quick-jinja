@@ -44,14 +44,14 @@ class QuickJinjaPython {
                 except:
                     ...
 
-                with (open('${templateFile.absolutePath}') as template_file):
+                with (open(r'${templateFile.absolutePath}') as template_file):
                     template = template_file.read()
 
             """.trimIndent()
 
             scriptFileContent += if (variablesFile != null) {
                 """${System.lineSeparator()}
-                    with (open('${variablesFile.absolutePath}') as data_file):
+                    with (open(r'${variablesFile.absolutePath}') as data_file):
                         data = json.load(data_file)
 
                 """.trimIndent()
