@@ -13,9 +13,21 @@
 
 ## Screenshots
 
-![editor_variables](screenshots/editor_variables.png)
+#### Provide sample variables in a dedicated editor
 
-![editor_result](screenshots/editor_result.png)
+![variables_editor](screenshots/variables_editor.png)
+
+#### View the rendered result in either plaintext or HTML mode
+
+![result_plaintext](screenshots/result_plaintext.png)
+
+![result_html](screenshots/result_html.png)
+
+#### Quickly choose the source of the template (file, selected text, clipboard)
+
+![template_from_selection](screenshots/template_from_selection.png)
+
+![template_from_clipboard](screenshots/template_from_clipboard.png)
 
 ## Requirements
 
@@ -58,7 +70,7 @@ Before actually using _Quick Jinja_ you should check/test your Python environmen
 ![settings](screenshots/settings.png)
 
 The plugin **does not** detect or use any (virtual) environment settings of your current project.
-However, you can use any individual script/executable that does the necessary/individual preparations. 
+However, you can use an individual script/executable that does the necessary/individual preparations. 
 
 Example:
 
@@ -101,8 +113,11 @@ Here's a detailed description anyway. :grinning:
 ![usage1](screenshots/usage1.png)
 
 1. Simply open and use the new tool window to render a _Jinja_ template.
-2. The selected template will automatically change based on your currently opened editor document.
-3. You can use the pin icon on the upper right to disable automatic selection and keep the currently opened document as template-source.
+2. Choose the template source:
+   - the complete contents of the currently edited file (automatically changes when switching tabs) 
+   - just the selected text from the currently opened editor
+   - the contents of your clipboard
+3. You can use the pin icon to disable automatic file selection and keep the currently opened document as template-source.
 4. Enter all variables (needed for rendering) in the variables tab.  
 Both _JSON_ and _YAML_ definitions are allowed.
 5. The status icon on the right will indicate if parsing of the entered variables was successful.
@@ -112,7 +127,10 @@ Both _JSON_ and _YAML_ definitions are allowed.
 ![usage2](screenshots/usage2.png)
 
 8. The rendered template (or any errors) will be shown there.
-9. The dedicated status icon will also indicate if the rendering process successfully finished.
+9. Choose the view mode:
+   - Plain text
+   - HTML (which should be more suitable when rendering HTML-templates)
+10. The dedicated status icon will also indicate if the rendering process successfully finished.
 
 ## License
 

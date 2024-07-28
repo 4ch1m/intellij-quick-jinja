@@ -2,6 +2,7 @@ package de.achimonline.quickjinja.settings
 
 data class QuickJinjaAppSettings(
     var executable: String = "python3",
+    var htmlResultViewerBackgroundColor: String = "#ffffff",
 
     // Jinja options ...
     var blockStartString: String = "{%",

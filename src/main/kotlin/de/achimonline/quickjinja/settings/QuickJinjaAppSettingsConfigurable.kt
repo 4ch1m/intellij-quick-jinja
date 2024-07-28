@@ -166,6 +166,23 @@ class QuickJinjaAppSettingsConfigurable : BoundConfigurable(message("settings.di
                 }
             }
 
+            group(message("settings.group.miscellaneous")) {
+                row {
+                    val hexColorRegex = Regex("^#([a-f]|[A-F]|[0-9]){3}(([a-f]|[A-F]|[0-9]){3})?$")
+
+                    textField()
+                        .label(message("settings.group.miscellaneous.html-resultviewer.backgroundcolor"))
+                        .comment(message("settings.group.miscellaneous.html-resultviewer.backgroundcolor.comment"))
+                        .validationOnInput {
+                            when {
+                                hexColorRegex.matches(it.text.trim()) -> { null }
+                                else -> { error(message("settings.group.miscellaneous.html-resultviewer.backgroundcolor.error")) }
+                            }
+                        }
+                        .bindText(settings::htmlResultViewerBackgroundColor)
+                }
+            }
+
             group {
                 row {
                     icon(heartIcon)

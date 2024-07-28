@@ -61,6 +61,17 @@ tasks {
         })
     }
 
+    signPlugin {
+        if (listOf(
+                "JB_PLUGIN_SIGN_CERTIFICATE_CHAIN",
+                "JB_PLUGIN_SIGN_PRIVATE_KEY",
+                "JB_PLUGIN_SIGN_PRIVATE_KEY_PASSWORD").all { System.getenv(it) != null }) {
+            certificateChainFile.set(file(System.getenv("JB_PLUGIN_SIGN_CERTIFICATE_CHAIN")))
+            privateKeyFile.set(file(System.getenv("JB_PLUGIN_SIGN_PRIVATE_KEY")))
+            password.set(File(System.getenv("JB_PLUGIN_SIGN_PRIVATE_KEY_PASSWORD")).readText())
+        }
+    }
+
     publishPlugin {
         if (project.hasProperty("JB_PLUGIN_PUBLISH_TOKEN")) {
             token.set(project.property("JB_PLUGIN_PUBLISH_TOKEN").toString())
