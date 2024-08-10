@@ -1,3 +1,13 @@
+## [1.3.0]
+
+### Fixed
+- remaining initialization errors of toolbar window
+
+### Changed
+- improved toolbar icon
+- major "Gradle IntelliJ Plugin" update (`1.17.4` to `2.0.1`)
+- dependency updates
+
 ## [1.2.1]
 
 ### Fixed

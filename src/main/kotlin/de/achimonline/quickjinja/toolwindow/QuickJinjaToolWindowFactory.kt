@@ -110,43 +110,39 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
         }
     }
 
-    init {
-        invokeLater {
-            ApplicationManager
-                .getApplication()
-                .messageBus
-                .connect()
-                .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
-                    override fun selectionChanged(event: FileEditorManagerEvent) {
-                        // **********************************
-                        // handle the current editor file ...
+    private fun subscribeToFileEditorManager() {
+        ApplicationManager
+            .getApplication()
+            .messageBus
+            .connect()
+            .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
+                override fun selectionChanged(event: FileEditorManagerEvent) {
+                    // **********************************
+                    // handle the current editor file ...
 
-                        editorFile = event.newFile
+                    editorFile = event.newFile
 
-                        if (::projectSettings.isInitialized) {
-                            if (!projectSettings.templatePinned) {
-                                if (editorFile != null) {
-                                    templateFilePath.text = editorFile!!.path
-                                }
-                            }
-                        }
-
-                        // ***************************************
-                        // handle the current editor selection ...
-
-                        handleTextSelection(event.manager.selectedTextEditor?.selectionModel?.selectedText)
-
-                        val oldSelectionModel = selectionModel
-
-                        selectionModel = event.manager.selectedTextEditor?.selectionModel
-
-                        if (selectionModel != oldSelectionModel) {
-                            oldSelectionModel?.removeSelectionListener(selectionListener)
-                            selectionModel?.addSelectionListener(selectionListener)
+                    if (!projectSettings.templatePinned) {
+                        if (editorFile != null) {
+                            templateFilePath.text = editorFile!!.path
                         }
                     }
-                })
-        }
+
+                    // ***************************************
+                    // handle the current editor selection ...
+
+                    handleTextSelection(event.manager.selectedTextEditor?.selectionModel?.selectedText)
+
+                    val oldSelectionModel = selectionModel
+
+                    selectionModel = event.manager.selectedTextEditor?.selectionModel
+
+                    if (selectionModel != oldSelectionModel) {
+                        oldSelectionModel?.removeSelectionListener(selectionListener)
+                        selectionModel?.addSelectionListener(selectionListener)
+                    }
+                }
+            })
     }
 
     private fun handleTextSelection(selectedText: String?) {
@@ -317,6 +313,8 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         appSettings = QuickJinjaAppSettingsState.instance.settings
         projectSettings = QuickJinjaProjectSettingsState.getInstance(project).settings
+
+        subscribeToFileEditorManager()
 
         resultHtmlView.apply {
             setOpenLinksInExternalBrowser(true)
