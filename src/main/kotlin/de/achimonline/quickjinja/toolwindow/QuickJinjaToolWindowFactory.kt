@@ -34,7 +34,6 @@ import com.intellij.ui.dsl.builder.*
 import com.intellij.ui.jcef.JCEFHtmlPanel
 import com.intellij.ui.layout.not
 import com.intellij.ui.layout.selected
-import com.intellij.util.ui.EmptyIcon
 import de.achimonline.quickjinja.bundle.QuickJinjaBundle.message
 import de.achimonline.quickjinja.helper.QuickJinjaHelper.Companion.createTempFileFromText
 import de.achimonline.quickjinja.parser.QuickJinjaParserJson
@@ -68,7 +67,7 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
     private enum class StatusIcon(val value: Icon) {
         OK(AllIcons.RunConfigurations.ToolbarPassed),
         ERROR(AllIcons.RunConfigurations.TestError),
-        UNKNOWN(EmptyIcon.ICON_0)
+        UNKNOWN(AllIcons.RunConfigurations.TestUnknown)
     }
 
     private var editorFile: VirtualFile? = null
@@ -112,40 +111,42 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
     }
 
     init {
-        ApplicationManager
-            .getApplication()
-            .messageBus
-            .connect()
-            .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
-                override fun selectionChanged(event: FileEditorManagerEvent) {
-                    // **********************************
-                    // handle the current editor file ...
+        invokeLater {
+            ApplicationManager
+                .getApplication()
+                .messageBus
+                .connect()
+                .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
+                    override fun selectionChanged(event: FileEditorManagerEvent) {
+                        // **********************************
+                        // handle the current editor file ...
 
-                    editorFile = event.newFile
+                        editorFile = event.newFile
 
-                    if (::projectSettings.isInitialized) {
-                        if (!projectSettings.templatePinned) {
-                            if (editorFile != null) {
-                                templateFilePath.text = editorFile!!.path
+                        if (::projectSettings.isInitialized) {
+                            if (!projectSettings.templatePinned) {
+                                if (editorFile != null) {
+                                    templateFilePath.text = editorFile!!.path
+                                }
                             }
                         }
+
+                        // ***************************************
+                        // handle the current editor selection ...
+
+                        handleTextSelection(event.manager.selectedTextEditor?.selectionModel?.selectedText)
+
+                        val oldSelectionModel = selectionModel
+
+                        selectionModel = event.manager.selectedTextEditor?.selectionModel
+
+                        if (selectionModel != oldSelectionModel) {
+                            oldSelectionModel?.removeSelectionListener(selectionListener)
+                            selectionModel?.addSelectionListener(selectionListener)
+                        }
                     }
-
-                    // ***************************************
-                    // handle the current editor selection ...
-
-                    handleTextSelection(event.manager.selectedTextEditor?.selectionModel?.selectedText)
-
-                    val oldSelectionModel = selectionModel
-
-                    selectionModel = event.manager.selectedTextEditor?.selectionModel
-
-                    if (selectionModel != oldSelectionModel) {
-                        oldSelectionModel?.removeSelectionListener(selectionListener)
-                        selectionModel?.addSelectionListener(selectionListener)
-                    }
-                }
-            })
+                })
+        }
     }
 
     private fun handleTextSelection(selectedText: String?) {

@@ -1,3 +1,8 @@
+## [1.2.1]
+
+### Fixed
+- issues with IntelliJ 2024.2 (improved toolbar initialization; removed "empty" icon resource)
+
 ## [1.2.0]
 
 ### Added
