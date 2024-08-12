@@ -42,6 +42,7 @@ import de.achimonline.quickjinja.process.QuickJinjaProcess
 import de.achimonline.quickjinja.python.QuickJinjaPython
 import de.achimonline.quickjinja.settings.*
 import de.achimonline.quickjinja.settings.TemplateSource.*
+import de.achimonline.quickjinja.toolwindow.QuickJinjaToolWindowPreviewLabel.Type
 import java.awt.Component
 import java.awt.datatransfer.DataFlavor
 import java.io.File
@@ -147,10 +148,10 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
 
     private fun handleTextSelection(selectedText: String?) {
         if (selectedText.isNullOrBlank()) {
-            templateTextSelectionPreview.setTextWarning(message("toolwindow.template.source.selection.empty"))
+            templateTextSelectionPreview.setText(message("toolwindow.template.source.selection.empty"), Type.WARNING)
             this.selectedText = null
         } else {
-            templateTextSelectionPreview.setTextInfo(selectedText)
+            templateTextSelectionPreview.setText(selectedText, Type.INFO)
             this.selectedText = selectedText
         }
     }
@@ -299,10 +300,10 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
                 val clipboardData = newTransferable?.getTransferData(DataFlavor.stringFlavor) as String?
 
                 if (clipboardData.isNullOrBlank()) {
-                    templateClipboardPreview.setTextWarning(message("toolwindow.template.source.clipboard.empty"))
+                    templateClipboardPreview.setText(message("toolwindow.template.source.clipboard.empty"), Type.WARNING)
                     clipboard = null
                 } else {
-                    templateClipboardPreview.setTextInfo(clipboardData)
+                    templateClipboardPreview.setText(clipboardData, Type.INFO)
                     clipboard = clipboardData
                 }
             },
@@ -407,7 +408,7 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
                                 }
                             }
 
-                        templateTextSelectionPreview = cell(QuickJinjaToolWindowPreviewLabel(""))
+                        templateTextSelectionPreview = cell(QuickJinjaToolWindowPreviewLabel(message("toolwindow.template.source.clipboard.empty"), Type.WARNING))
                             .align(AlignX.FILL)
                             .resizableColumn()
                             .component
@@ -425,7 +426,7 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
                                 }
                             }
 
-                        templateClipboardPreview = cell(QuickJinjaToolWindowPreviewLabel(""))
+                        templateClipboardPreview = cell(QuickJinjaToolWindowPreviewLabel(message("toolwindow.template.source.clipboard.empty"), Type.WARNING))
                             .align(AlignX.FILL)
                             .resizableColumn()
                             .component
@@ -470,9 +471,9 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
         val currentClipboard: String? = CopyPasteManager.getInstance().contents?.getTransferData(DataFlavor.stringFlavor) as String?
 
         if (currentClipboard.isNullOrBlank()) {
-            templateClipboardPreview.setTextWarning(message("toolwindow.template.source.clipboard.empty"))
+            templateClipboardPreview.setText(message("toolwindow.template.source.clipboard.empty"), Type.WARNING)
         } else {
-            templateClipboardPreview.setTextInfo(currentClipboard)
+            templateClipboardPreview.setText(currentClipboard, Type.INFO)
         }
 
         observeClipboard(toolWindow.disposable)

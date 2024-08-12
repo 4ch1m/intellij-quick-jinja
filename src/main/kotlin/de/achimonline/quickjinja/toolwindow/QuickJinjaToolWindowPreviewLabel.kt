@@ -1,29 +1,24 @@
 package de.achimonline.quickjinja.toolwindow
 
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.ui.JBUI
+import com.intellij.util.ui.JBUI.CurrentTheme
 import java.awt.Color
 import javax.swing.JLabel
 
-class QuickJinjaToolWindowPreviewLabel(text: String): JLabel(text) {
+class QuickJinjaToolWindowPreviewLabel(text: String, type: Type = Type.INFO): JLabel(text) {
+    enum class Type(val background: Color) {
+        INFO(CurrentTheme.NotificationInfo.backgroundColor()),
+        WARNING(CurrentTheme.NotificationWarning.backgroundColor()),
+        ERROR(CurrentTheme.NotificationError.backgroundColor())
+    }
+
     init {
         isOpaque = true
+        background = type.background
     }
 
-    private fun setText(text: String?, backgroundColor: Color) {
-        background = backgroundColor
+    fun setText(text: String?, type: Type) {
+        background = type.background
         super.setText(text?.let { StringUtil.shortenTextWithEllipsis(it, 50, 3) })
-    }
-
-    fun setTextInfo(text: String?) {
-        setText(text, JBUI.CurrentTheme.NotificationInfo.backgroundColor())
-    }
-
-    fun setTextError(text: String?) {
-        setText(text, JBUI.CurrentTheme.NotificationError.backgroundColor())
-    }
-
-    fun setTextWarning(text: String?) {
-        setText(text, JBUI.CurrentTheme.NotificationWarning.backgroundColor())
     }
 }

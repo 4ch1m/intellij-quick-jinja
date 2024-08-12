@@ -1,9 +1,8 @@
 package de.achimonline.quickjinja.parser
 
 import com.google.gson.FormattingStyle
-import org.junit.jupiter.api.Test
-
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 
 class QuickJinjaParserYamlTest {
     private val parser = QuickJinjaParserYaml()

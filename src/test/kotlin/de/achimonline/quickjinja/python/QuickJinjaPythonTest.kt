@@ -3,8 +3,8 @@ package de.achimonline.quickjinja.python
 import de.achimonline.quickjinja.python.QuickJinjaPython.Companion.createScriptFile
 import de.achimonline.quickjinja.settings.QuickJinjaAppSettings
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.io.path.createTempFile

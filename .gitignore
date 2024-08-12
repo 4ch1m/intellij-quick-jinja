@@ -2,5 +2,6 @@
 .gradle/
 .kotlin/
 .intellijPlatform/
+.run/
 build/
-_assets/
+assets/

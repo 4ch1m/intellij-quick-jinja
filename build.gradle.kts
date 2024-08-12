@@ -39,6 +39,8 @@ dependencies {
     implementation("org.yaml:snakeyaml:2.2")
 
     testImplementation(kotlin("test"))
+
+    testRuntimeOnly("junit:junit:4.13.2") // see: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-faq.html#junit5-test-framework-refers-to-junit4
 }
 
 kotlin {

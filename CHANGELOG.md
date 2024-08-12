@@ -1,3 +1,10 @@
+## [1.4.0]
+
+### Changed
+- required IDE version >= `2024.2`
+- minor code improvements
+- Gradle-wrapper update
+
 ## [1.3.0]
 
 ### Fixed
@@ -6,6 +13,7 @@
 ### Changed
 - improved toolbar icon
 - major "Gradle IntelliJ Plugin" update (`1.17.4` to `2.0.1`)
+- Gradle-wrapper update
 - dependency updates
 
 ## [1.2.1]
