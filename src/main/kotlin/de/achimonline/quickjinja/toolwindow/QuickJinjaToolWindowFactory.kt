@@ -1,12 +1,10 @@
 package de.achimonline.quickjinja.toolwindow
 
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.actionSystem.impl.ActionButton
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.invokeLater
 import com.intellij.openapi.editor.SelectionModel
 import com.intellij.openapi.editor.event.DocumentEvent
@@ -14,9 +12,11 @@ import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.editor.event.SelectionEvent
 import com.intellij.openapi.editor.event.SelectionListener
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.ide.CopyPasteManager
+import com.intellij.openapi.ide.CopyPasteManager.ContentChangedListener
 import com.intellij.openapi.observable.properties.AtomicBooleanProperty
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.DumbAware
@@ -26,6 +26,9 @@ import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowFactory
+import com.intellij.openapi.wm.ToolWindowManager
+import com.intellij.openapi.wm.ex.ToolWindowManagerListener
+import com.intellij.openapi.wm.ex.ToolWindowManagerListener.ToolWindowManagerEventType.HideToolWindow
 import com.intellij.ui.EditorTextField
 import com.intellij.ui.GotItTooltip
 import com.intellij.ui.components.JBTabbedPane
@@ -41,7 +44,11 @@ import de.achimonline.quickjinja.parser.QuickJinjaParserYaml
 import de.achimonline.quickjinja.process.QuickJinjaProcess
 import de.achimonline.quickjinja.python.QuickJinjaPython
 import de.achimonline.quickjinja.settings.*
+import de.achimonline.quickjinja.settings.ResultViewMode.HTML
+import de.achimonline.quickjinja.settings.ResultViewMode.PLAIN_TEXT
 import de.achimonline.quickjinja.settings.TemplateSource.*
+import de.achimonline.quickjinja.toolwindow.QuickJinjaToolWindowFactory.TabId.RESULT
+import de.achimonline.quickjinja.toolwindow.QuickJinjaToolWindowFactory.TabId.VARIABLES
 import de.achimonline.quickjinja.toolwindow.QuickJinjaToolWindowPreviewLabel.Type
 import java.awt.Component
 import java.awt.datatransfer.DataFlavor
@@ -51,7 +58,7 @@ import javax.swing.JCheckBox
 import javax.swing.JLabel
 
 @Suppress("DialogTitleCapitalization")
-class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
+class QuickJinjaToolWindowFactory: ToolWindowFactory, ToolWindowManagerListener, FileEditorManagerListener, DumbAware {
     private enum class TabId {
         VARIABLES,
         RESULT
@@ -96,6 +103,7 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
     private lateinit var resultStatus: JLabel
 
     private val fileDocumentManager = FileDocumentManager.getInstance()
+    private val copyPasteManager = CopyPasteManager.getInstance()
 
     private lateinit var appSettings: QuickJinjaAppSettings
     private lateinit var projectSettings: QuickJinjaProjectSettings
@@ -105,60 +113,84 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
         QuickJinjaParserYaml()
     )
 
-    private val selectionListener = object : SelectionListener {
+    private val editorSelectionListener = object : SelectionListener {
         override fun selectionChanged(selectionEvent: SelectionEvent) {
-            handleTextSelection(selectionEvent.editor.selectionModel.selectedText)
+            updateTextSelection(selectionEvent.editor.selectionModel.selectedText)
         }
     }
 
-    private fun subscribeToFileEditorManager() {
-        ApplicationManager
-            .getApplication()
-            .messageBus
-            .connect()
-            .subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, object : FileEditorManagerListener {
-                override fun selectionChanged(event: FileEditorManagerEvent) {
-                    // **********************************
-                    // handle the current editor file ...
+    private val clipBoardContentChangedListener =
+        ContentChangedListener { _, newTransferable -> updateClipboardContent(newTransferable?.getTransferData(DataFlavor.stringFlavor) as String?) }
 
-                    editorFile = event.newFile
+    private fun updateEditorFile(virtualFile: VirtualFile?) {
+        editorFile = virtualFile
 
-                    if (!projectSettings.templatePinned) {
-                        if (editorFile != null) {
-                            templateFilePath.text = editorFile!!.path
-                        }
-                    }
-
-                    // ***************************************
-                    // handle the current editor selection ...
-
-                    handleTextSelection(event.manager.selectedTextEditor?.selectionModel?.selectedText)
-
-                    val oldSelectionModel = selectionModel
-
-                    selectionModel = event.manager.selectedTextEditor?.selectionModel
-
-                    if (selectionModel != oldSelectionModel) {
-                        oldSelectionModel?.removeSelectionListener(selectionListener)
-                        selectionModel?.addSelectionListener(selectionListener)
-                    }
-                }
-            })
+        if (!projectSettings.templatePinned) {
+            templateFilePath.text = virtualFile?.path ?: ""
+        }
     }
 
-    private fun handleTextSelection(selectedText: String?) {
-        if (selectedText.isNullOrBlank()) {
+    private fun updateTextSelection(newSelectedText: String?) {
+        if (newSelectedText.isNullOrBlank()) {
             templateTextSelectionPreview.setText(message("toolwindow.template.source.selection.empty"), Type.WARNING)
-            this.selectedText = null
+            selectedText = null
         } else {
-            templateTextSelectionPreview.setText(selectedText, Type.INFO)
-            this.selectedText = selectedText
+            templateTextSelectionPreview.setText(newSelectedText, Type.INFO)
+            selectedText = newSelectedText
         }
+    }
+
+    private fun updateSelectionModel(newSelectionModel: SelectionModel?) {
+        selectionModel?.removeSelectionListener(editorSelectionListener)
+        selectionModel = newSelectionModel
+        selectionModel?.addSelectionListener(editorSelectionListener)
+    }
+
+    private fun updateClipboardContent(newClipboardContent: String?) {
+        if (newClipboardContent.isNullOrBlank()) {
+            templateClipboardPreview.setText(message("toolwindow.template.source.clipboard.empty"), Type.WARNING)
+            clipboard = null
+        } else {
+            templateClipboardPreview.setText(newClipboardContent, Type.INFO)
+            clipboard = newClipboardContent
+        }
+    }
+
+    override fun toolWindowShown(toolWindow: ToolWindow) {
+        if (editorFile == null) {
+            updateEditorFile(FileEditorManager.getInstance(toolWindow.project).selectedTextEditor?.virtualFile)
+        }
+
+        if (selectionModel == null) {
+            val initialSelectionModel = FileEditorManager.getInstance(toolWindow.project).selectedTextEditor?.selectionModel
+            updateTextSelection(initialSelectionModel?.selectedText)
+            initialSelectionModel?.addSelectionListener(editorSelectionListener)
+            selectionModel = initialSelectionModel
+        }
+
+        updateClipboardContent(copyPasteManager.contents?.getTransferData(DataFlavor.stringFlavor) as String?)
+        copyPasteManager.addContentChangedListener(clipBoardContentChangedListener, toolWindow.disposable)
+    }
+
+    override fun stateChanged(
+        toolWindowManager: ToolWindowManager,
+        changeType: ToolWindowManagerListener.ToolWindowManagerEventType
+    ) {
+        if (changeType == HideToolWindow) {
+            updateSelectionModel(null)
+            copyPasteManager.removeContentChangedListener(clipBoardContentChangedListener)
+        }
+    }
+
+    override fun selectionChanged(event: FileEditorManagerEvent) {
+        updateEditorFile(event.newFile)
+        updateTextSelection(event.manager.selectedTextEditor?.selectionModel?.selectedText)
+        updateSelectionModel(event.manager.selectedTextEditor?.selectionModel)
     }
 
     private fun createVariablesTab(project: Project): Tab {
         return Tab(
-            TabId.VARIABLES,
+            VARIABLES,
             message("toolwindow.tab.variables"),
             AllIcons.Debugger.VariablesTab,
             panel {
@@ -171,8 +203,8 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
 
                             addDocumentListener(object : DocumentListener {
                                 override fun documentChanged(event: DocumentEvent) {
-                                    validateVariables()
                                     projectSettings.variables = variablesEditor.text
+                                    validateVariables()
                                 }
                             })
                         }
@@ -190,10 +222,7 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
                         }
                         .onChanged {
                             projectSettings.loadVariablesFromFile = variablesLoadFromFile.isSelected
-
-                            if (variablesLoadFromFile.isSelected) {
-                                validateVariables()
-                            }
+                            validateVariables()
                         }
                         .component
 
@@ -229,11 +258,11 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
     }
 
     private fun createResultTab(project: Project): Tab {
-        val resultPlainTextViewActive = AtomicBooleanProperty(projectSettings.resultViewMode == ResultViewMode.PLAIN_TEXT)
-        val resultHtmlViewActive = AtomicBooleanProperty(projectSettings.resultViewMode == ResultViewMode.HTML)
+        val resultPlainTextViewActive = AtomicBooleanProperty(projectSettings.resultViewMode == PLAIN_TEXT)
+        val resultHtmlViewActive = AtomicBooleanProperty(projectSettings.resultViewMode == HTML)
 
         return Tab(
-            TabId.RESULT,
+            RESULT,
             message("toolwindow.tab.result"),
             AllIcons.Actions.Preview,
             panel {
@@ -241,23 +270,23 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
                     row(message("toolwindow.tab.result.view.mode")) {
                         radioButton(
                             message("toolwindow.tab.result.view.mode.plaintext"),
-                            ResultViewMode.PLAIN_TEXT
+                            PLAIN_TEXT
                         )
                             .bindSelected(resultPlainTextViewActive)
                             .onChanged {
                                 if (it.isSelected) {
-                                    projectSettings.resultViewMode = ResultViewMode.PLAIN_TEXT
+                                    projectSettings.resultViewMode = PLAIN_TEXT
                                 }
                             }
 
                         radioButton(
                             message("toolwindow.tab.result.view.mode.html"),
-                            ResultViewMode.HTML
+                            HTML
                         )
                             .bindSelected(resultHtmlViewActive)
                             .onChanged {
                                 if (it.isSelected) {
-                                    projectSettings.resultViewMode = ResultViewMode.HTML
+                                    projectSettings.resultViewMode = HTML
                                 }
                             }
                     }
@@ -285,37 +314,21 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
     }
 
     private fun createGotItTooltip(parentComponent: Component): GotItTooltip {
-        return GotItTooltip(
-            "de.achimonline.quickjinja.gotit.setup",
-            message("gotitpopup.setup")
-        ).withIcon(AllIcons.General.Information)
+        return GotItTooltip("de.achimonline.quickjinja.gotit.setup", message("gotitpopup.setup"))
+            .withIcon(AllIcons.General.Information)
             .withLink(message("gotitpopup.setup.link")) {
                 ShowSettingsUtil.getInstance().editConfigurable(parentComponent, QuickJinjaAppSettingsConfigurable())
             }
-    }
-
-    private fun observeClipboard(disposable: Disposable) {
-        CopyPasteManager.getInstance().addContentChangedListener(
-            { _, newTransferable ->
-                val clipboardData = newTransferable?.getTransferData(DataFlavor.stringFlavor) as String?
-
-                if (clipboardData.isNullOrBlank()) {
-                    templateClipboardPreview.setText(message("toolwindow.template.source.clipboard.empty"), Type.WARNING)
-                    clipboard = null
-                } else {
-                    templateClipboardPreview.setText(clipboardData, Type.INFO)
-                    clipboard = clipboardData
-                }
-            },
-            disposable
-        )
     }
 
     override fun createToolWindowContent(project: Project, toolWindow: ToolWindow) {
         appSettings = QuickJinjaAppSettingsState.instance.settings
         projectSettings = QuickJinjaProjectSettingsState.getInstance(project).settings
 
-        subscribeToFileEditorManager()
+        project.messageBus.connect(toolWindow.contentManager).let {
+            it.subscribe(ToolWindowManagerListener.TOPIC, this)
+            it.subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, this)
+        }
 
         resultHtmlView.apply {
             setOpenLinksInExternalBrowser(true)
@@ -476,8 +489,6 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
             templateClipboardPreview.setText(currentClipboard, Type.INFO)
         }
 
-        observeClipboard(toolWindow.disposable)
-
         validateVariables() // manually trigger validation after toolwindow creation
     }
 
@@ -559,7 +570,21 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
         return createTempFileFromText(cachedDocument!!.text)
     }
 
+    private fun switchToTab(tabId: TabId) {
+        tabPane.selectedIndex = tabs.indexOf(
+            tabs.find {
+                it.id == tabId
+            }
+        )
+    }
+
     private fun run() {
+        // validate variables again (in case a vars-file is used and the contents changed)
+        if (variablesLoadFromFile.isSelected && !validateVariables()) {
+            switchToTab(VARIABLES)
+            return
+        }
+
         val templateFile: File?
 
         when (projectSettings.templateSource) {
@@ -616,10 +641,6 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, DumbAware {
             )
         }
 
-        tabPane.selectedIndex = tabs.indexOf(
-            tabs.find {
-                it.id == TabId.RESULT
-            }
-        )
+        switchToTab(RESULT)
     }
 }

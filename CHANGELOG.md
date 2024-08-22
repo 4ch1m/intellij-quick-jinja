@@ -1,3 +1,11 @@
+## [1.5.0]
+
+### Changed
+- improved handling of text-selection- and clipboard-listener (which now are only active when the toolbar-windows is actually visible) 
+- other minor code improvements
+- Gradle-wrapper update
+- dependency updates
+
 ## [1.4.0]
 
 ### Changed
