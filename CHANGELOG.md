@@ -1,3 +1,8 @@
+## [1.5.1]
+
+### Fixed
+- improved compatibility with older Python versions (< `3.10`) 
+
 ## [1.5.0]
 
 ### Changed
