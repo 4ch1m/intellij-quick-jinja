@@ -95,7 +95,7 @@ Example:
   ```bash
   #!/bin/bash
   source ~/quick-jinja/venv/bin/activate
-  python3 ${@}
+  python3 "${@}"
   ```
 
 * don't forget to make it executable:

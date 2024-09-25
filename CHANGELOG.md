@@ -1,3 +1,13 @@
+## [1.5.2]
+
+### Fixed
+- processing of larger templates no longer results in hangup
+
+### Changed
+- other minor code improvements
+- Gradle-wrapper update
+- dependency updates
+
 ## [1.5.1]
 
 ### Fixed

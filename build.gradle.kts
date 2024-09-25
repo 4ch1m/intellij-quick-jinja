@@ -36,7 +36,7 @@ dependencies {
     }
 
     implementation("com.google.code.gson:gson:2.11.0")
-    implementation("org.yaml:snakeyaml:2.2")
+    implementation("org.yaml:snakeyaml:2.3")
 
     testImplementation(kotlin("test"))
 

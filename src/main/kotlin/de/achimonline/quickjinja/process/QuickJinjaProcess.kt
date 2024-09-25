@@ -4,7 +4,7 @@ import com.intellij.execution.configurations.GeneralCommandLine
 
 class QuickJinjaProcess {
     data class Result(
-        val returnCode: Int,
+        val rc: Int,
         val stdout: String,
         val stderr: String
     )
@@ -17,12 +17,15 @@ class QuickJinjaProcess {
                 .withParameters(parameters)
                 .createProcess()
 
+            val inputStream = process.inputStream.bufferedReader().use { it.readText() }
+            val errorStream = process.errorStream.bufferedReader().use { it.readText() }
+
             process.waitFor()
 
             return Result(
                 process.exitValue(),
-                process.inputStream.bufferedReader().use { it.readText() },
-                process.errorStream.bufferedReader().use { it.readText() }
+                inputStream,
+                errorStream
             )
         }
     }

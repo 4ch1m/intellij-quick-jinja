@@ -624,7 +624,7 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, ToolWindowManagerListener,
 
         val processResult = QuickJinjaProcess.run(appSettings.executable, listOf(pythonScript.absolutePath))
 
-        if (processResult.returnCode == 0) {
+        if (processResult.rc == 0) {
             resultStatus.icon = StatusIcon.OK.value
             resultPlainTextView.text = processResult.stdout
             resultHtmlView.setHtml(processResult.stdout)

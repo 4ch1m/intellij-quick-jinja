@@ -222,7 +222,7 @@ class QuickJinjaAppSettingsConfigurable : BoundConfigurable(message("settings.di
         icon: JLabel,
         commentFormatter: (String) -> String = { input: String -> input }
     ): Boolean {
-        val success = result.returnCode == 0 && resultCondition(result.stdout)
+        val success = result.rc == 0 && resultCondition(result.stdout)
 
         if (success) {
             icon.icon = TestStatusIcon.SUCCESS.value
