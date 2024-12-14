@@ -53,6 +53,7 @@ import de.achimonline.quickjinja.toolwindow.QuickJinjaToolWindowPreviewLabel.Typ
 import java.awt.Component
 import java.awt.datatransfer.DataFlavor
 import java.io.File
+import java.nio.file.Paths
 import javax.swing.Icon
 import javax.swing.JCheckBox
 import javax.swing.JLabel
@@ -351,7 +352,7 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, ToolWindowManagerListener,
                         AllIcons.Debugger.ThreadRunning
                     ) {
                         override fun actionPerformed(e: AnActionEvent) {
-                            run()
+                            run(project)
                         }
                     }).component
 
@@ -578,7 +579,7 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, ToolWindowManagerListener,
         )
     }
 
-    private fun run() {
+    private fun run(project: Project) {
         // validate variables again (in case a vars-file is used and the contents changed)
         if (variablesLoadFromFile.isSelected && !validateVariables()) {
             switchToTab(VARIABLES)
@@ -619,7 +620,8 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, ToolWindowManagerListener,
         val pythonScript = QuickJinjaPython.createScriptFile(
             templateFile = templateFile,
             variablesFile = generateFileFromVariables(),
-            options = appSettings.getJinjaOptions()
+            options = appSettings.getJinjaOptions(),
+            fileSystemLoaderPaths = listOfNotNull(project.basePath, Paths.get(templateFilePath.text).parent.toString())
         )
 
         val processResult = QuickJinjaProcess.run(appSettings.executable, listOf(pythonScript.absolutePath))

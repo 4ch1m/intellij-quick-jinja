@@ -5,7 +5,12 @@ import java.io.File
 
 class QuickJinjaPython {
     companion object {
-        fun createScriptFile(templateFile: File, variablesFile: File? = null, options: Map<String, Any>? = null): File {
+        fun createScriptFile(
+            templateFile: File,
+            variablesFile: File? = null,
+            options: Map<String, Any>? = null,
+            fileSystemLoaderPaths: List<String> = emptyList()
+        ): File {
             var scriptFileContent = """
                 import sys
                 import json
@@ -33,7 +38,10 @@ class QuickJinjaPython {
             scriptFileContent += """${System.lineSeparator()}
                 }
                 
-                environment = jinja2.Environment(**options)
+                environment = jinja2.Environment(
+                    loader=jinja2.FileSystemLoader([${fileSystemLoaderPaths.joinToString(", ") { "r'$it'" }}], encoding='utf-8', followlinks=True),
+                    **options
+                )
                 
                 try:
                     import ansible.plugins.filter.core

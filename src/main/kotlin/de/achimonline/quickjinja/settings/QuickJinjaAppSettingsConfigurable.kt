@@ -16,7 +16,7 @@ import javax.swing.JEditorPane
 import javax.swing.JLabel
 
 @Suppress("DialogTitleCapitalization")
-class QuickJinjaAppSettingsConfigurable : BoundConfigurable(message("settings.display.name")){
+class QuickJinjaAppSettingsConfigurable : BoundConfigurable(message("settings.display.name")) {
     private val settings
         get() = QuickJinjaAppSettingsState.instance.settings
 
@@ -186,7 +186,14 @@ class QuickJinjaAppSettingsConfigurable : BoundConfigurable(message("settings.di
             group {
                 row {
                     icon(heartIcon)
-                    text(message("settings.donation", "https://paypal.me/AchimSeufert"))
+                    text(
+                        message(
+                            "settings.feedback",
+                            "https://paypal.me/AchimSeufert",
+                            "https://github.com/4ch1m/intellij-quick-jinja",
+                            "https://plugins.jetbrains.com/plugin/24850-quick-jinja"
+                        )
+                    )
                 }
             }
         }

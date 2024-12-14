@@ -1,3 +1,12 @@
+## [1.6.0]
+
+### Added
+- integration of Jinja's `FileSystemLoader` in order to make usage of `extends`, `include`, `import` in templates possible
+
+### Changed
+- Gradle-wrapper update
+- dependency updates
+
 ## [1.5.2]
 
 ### Fixed

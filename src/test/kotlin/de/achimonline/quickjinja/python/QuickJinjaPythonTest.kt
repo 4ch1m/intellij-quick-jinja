@@ -29,7 +29,10 @@ class QuickJinjaPythonTest {
             options = {
             }
             
-            environment = jinja2.Environment(**options)
+            environment = jinja2.Environment(
+                loader=jinja2.FileSystemLoader([], encoding='utf-8', followlinks=True),
+                **options
+            )
             
             try:
                 import ansible.plugins.filter.core
@@ -54,42 +57,7 @@ class QuickJinjaPythonTest {
     }
 
     @Test
-    fun createScriptFile_withDataFile() {
-        assertEquals("""
-            import sys
-            import json
-            import jinja2
-            
-            options = {
-            }
-            
-            environment = jinja2.Environment(**options)
-            
-            try:
-                import ansible.plugins.filter.core
-                import ansible.plugins.test.core
-            
-                environment.filters.update(ansible.plugins.filter.core.FilterModule().filters())
-                environment.tests.update(ansible.plugins.test.core.TestModule().tests())
-            except:
-                ...
-            
-            with open(r'${templateFile.path}') as template_file:
-                template = template_file.read()
-            
-            with open(r'${dataFile}') as data_file:
-                data = json.load(data_file)
-            
-            try:
-                print(environment.from_string(template).render(**data))
-            except Exception as exception:
-                print(exception)
-                exit(1)
-        """.trimIndent(), createScriptFile(templateFile, dataFile).readText())
-    }
-
-    @Test
-    fun createScriptFile_withDataFileAndOptions() {
+    fun createScriptFile_withOptionalArgs() {
         assertEquals("""
             import sys
             import json
@@ -109,7 +77,10 @@ class QuickJinjaPythonTest {
                 'autoescape': False
             }
             
-            environment = jinja2.Environment(**options)
+            environment = jinja2.Environment(
+                loader=jinja2.FileSystemLoader([r'/project/dir', r'/template/dir'], encoding='utf-8', followlinks=True),
+                **options
+            )
             
             try:
                 import ansible.plugins.filter.core
@@ -131,7 +102,12 @@ class QuickJinjaPythonTest {
             except Exception as exception:
                 print(exception)
                 exit(1)
-        """.trimIndent(), createScriptFile(templateFile, dataFile, QuickJinjaAppSettings().getJinjaOptions()).readText())
+        """.trimIndent(), createScriptFile(
+            templateFile,
+            dataFile,
+            QuickJinjaAppSettings().getJinjaOptions(),
+            listOf("/project/dir", "/template/dir")
+        ).readText())
     }
 
     @AfterEach

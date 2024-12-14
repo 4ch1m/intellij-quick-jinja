@@ -7,6 +7,8 @@
 * [Installation](#installation)
 * [Setup](#setup)
 * [Usage](#usage)
+  * [General](#general)
+  * [Base-/Parent-Templates](#base-parent-templates)
 * [License](#license)
 * [Credits](#credits)
 * [Donate](#donate) :heart:
@@ -107,6 +109,8 @@ Reference this script in the plugin; and you should be ready to go. :thumbsup:
 
 ## Usage
 
+### General
+
 Everything should be pretty self-explanatory.  
 Here's a detailed description anyway. :grinning:
 
@@ -131,6 +135,16 @@ Both _JSON_ and _YAML_ definitions are allowed.
    - Plain text
    - HTML (which should be more suitable when rendering HTML-templates)
 10. The dedicated status icon will also indicate if the rendering process successfully finished.
+
+### Base-/Parent-Templates
+
+_Quick Jinja_ can load outsourced templates which are integrated via "[extends](https://jinja.palletsprojects.com/en/stable/templates/#nesting-extends)", "[include](https://jinja.palletsprojects.com/en/stable/templates/#include)" or "[import](https://jinja.palletsprojects.com/en/stable/templates/#import)".  
+Jinja's [FileSystemLoader](https://jinja.palletsprojects.com/en/stable/api/#jinja2.FileSystemLoader) is being used for this.
+
+The loader will search in these folders (and in this order) for the referenced file:
+
+* project root directory
+* parent directory of the file being rendered by _Quick Jinja_
 
 ## License
 
