@@ -8,10 +8,10 @@ group = property("pluginGroup")
 version = property("pluginVersion")
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "2.1.0"
+    id("org.jetbrains.kotlin.jvm") version "2.1.10"
     id("org.jetbrains.intellij.platform") version "2.2.0"
     id("org.jetbrains.changelog") version "2.2.1"
-    id("com.github.ben-manes.versions") version "0.51.0"
+    id("com.github.ben-manes.versions") version "0.52.0"
 }
 
 repositories {
@@ -29,14 +29,13 @@ dependencies {
             providers.gradleProperty("platformVersion")
         )
 
-        instrumentationTools()
         pluginVerifier()
         zipSigner()
         testFramework(TestFrameworkType.Platform)
     }
 
-    implementation("com.google.code.gson:gson:2.11.0")
-    implementation("org.yaml:snakeyaml:2.3")
+    implementation("com.google.code.gson:gson:2.12.1")
+    implementation("org.yaml:snakeyaml:2.4")
 
     testImplementation(kotlin("test"))
 
