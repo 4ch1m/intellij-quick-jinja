@@ -100,7 +100,7 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, ToolWindowManagerListener,
     private lateinit var variablesFileStatus: JLabel
 
     private lateinit var resultPlainTextView: EditorTextField
-    private val resultHtmlView = JCEFHtmlPanel(null)
+    private val resultHtmlView = JCEFHtmlPanel("about:blank")
     private lateinit var resultStatus: JLabel
 
     private val fileDocumentManager = FileDocumentManager.getInstance()

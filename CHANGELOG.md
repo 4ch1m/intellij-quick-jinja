@@ -1,3 +1,13 @@
+## [1.7.0]
+
+### Fixed
+- plugin incompatibilities with `2025.1`
+
+### Changed
+- required IDE version >= `2025.1`
+- Gradle-wrapper update
+- dependency updates
+
 ## [1.6.1]
 
 ### Changed
@@ -57,7 +67,7 @@
 ## [1.2.1]
 
 ### Fixed
-- issues with IntelliJ 2024.2 (improved toolbar initialization; removed "empty" icon resource)
+- issues with IntelliJ `2024.2` (improved toolbar initialization; removed "empty" icon resource)
 
 ## [1.2.0]
 
