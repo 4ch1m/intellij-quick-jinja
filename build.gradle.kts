@@ -8,10 +8,10 @@ group = property("pluginGroup")
 version = property("pluginVersion")
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "2.2.0"
-    id("org.jetbrains.intellij.platform") version "2.7.0"
+    id("org.jetbrains.kotlin.jvm") version "2.2.20"
+    id("org.jetbrains.intellij.platform") version "2.9.0"
     id("org.jetbrains.changelog") version "2.4.0"
-    id("com.github.ben-manes.versions") version "0.52.0"
+    id("com.github.ben-manes.versions") version "0.53.0"
 }
 
 repositories {
@@ -34,8 +34,8 @@ dependencies {
         testFramework(TestFrameworkType.Platform)
     }
 
-    implementation("com.google.code.gson:gson:2.13.1")
-    implementation("org.yaml:snakeyaml:2.4")
+    implementation("com.google.code.gson:gson:2.13.2")
+    implementation("org.yaml:snakeyaml:2.5")
 
     testImplementation(kotlin("test"))
 
@@ -60,7 +60,10 @@ intellijPlatform {
 
         ideaVersion {
             sinceBuild = property("pluginSinceBuild")
-            untilBuild = provider { null }
+
+            if (providers.gradleProperty("pluginUntilBuild").isPresent) {
+                untilBuild = property("pluginUntilBuild")
+            }
         }
     }
 

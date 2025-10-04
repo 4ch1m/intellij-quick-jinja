@@ -9,6 +9,7 @@
 * [Usage](#usage)
   * [General](#general)
   * [Base-/Parent-Templates](#base-parent-templates)
+  * [Custom filters/tests](#custom-filterstests)
 * [License](#license)
 * [Credits](#credits)
 * [Donate](#donate) :heart:
@@ -145,6 +146,61 @@ The loader will search in these folders (and in this order) for the referenced f
 
 * project root directory
 * parent directory of the file being rendered by _Quick Jinja_
+
+### Custom filters/tests
+
+#### Filters
+
+You can inject your own Jinja filters by referring to an external Python script via the "Customizations" tab.
+
+The script must contain a function named `filters`; which returns a dictionary with all new filters to be exposed.
+
+e.g.: `my_custom_filters.py`
+
+```python
+def swap_case(value):
+    return value.swapcase()
+
+def enclose(value, prefix='[', suffix=']'):
+    return f'{prefix}{value}{suffix}'
+
+def filters():
+    return {
+        'swapcase': swap_case,
+        'enclose': enclose
+    }
+```
+
+* `{{ "QuickJinja" | swapcase }}` -> `qUICKjINJA`
+* `{{ "QuickJinja" | enclose }}` -> `[QuickJinja]`
+* `{{ "QuickJinja" | enclose('<', '>') }}` -> `<QuickJinja>`
+
+(check the official Jinja documentation for more about [Custom Filters](https://jinja.palletsprojects.com/en/stable/api/#writing-filters))
+
+#### Tests
+
+Adding custom tests works the same way as adding custom filters; however the function `tests` will return all new tests in this case.
+
+e.g. `my_custom_tests.py`
+
+```python
+import re
+
+email_regex = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+
+def is_email_address(value):
+    return True if email_regex.match(value) else False
+
+def tests():
+    return {
+        'email_address': is_email_address
+    }
+```
+
+* `{{ "test@test.com" is email_address }}` -> `True`
+* `{{ "test<at>test.com" is email_address }}` -> `False`
+
+(check the official Jinja documentation for more about [Custom Tests](https://jinja.palletsprojects.com/en/stable/api/#writing-tests))
 
 ## License
 

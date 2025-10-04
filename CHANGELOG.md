@@ -1,3 +1,15 @@
+## [1.8.0]
+
+### Added
+- new feature: configuration of custom Jinja filters/tests (via new "Customizations" tab in tool window)
+
+### Fixed
+- minor UI improvements
+
+### Changed
+- Gradle-wrapper update
+- dependency updates
+
 ## [1.7.1]
 
 ### Changed

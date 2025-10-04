@@ -47,6 +47,7 @@ import de.achimonline.quickjinja.settings.*
 import de.achimonline.quickjinja.settings.ResultViewMode.HTML
 import de.achimonline.quickjinja.settings.ResultViewMode.PLAIN_TEXT
 import de.achimonline.quickjinja.settings.TemplateSource.*
+import de.achimonline.quickjinja.toolwindow.QuickJinjaToolWindowFactory.TabId.CUSTOMIZATIONS
 import de.achimonline.quickjinja.toolwindow.QuickJinjaToolWindowFactory.TabId.RESULT
 import de.achimonline.quickjinja.toolwindow.QuickJinjaToolWindowFactory.TabId.VARIABLES
 import de.achimonline.quickjinja.toolwindow.QuickJinjaToolWindowPreviewLabel.Type
@@ -62,6 +63,7 @@ import javax.swing.JLabel
 class QuickJinjaToolWindowFactory: ToolWindowFactory, ToolWindowManagerListener, FileEditorManagerListener, DumbAware {
     private enum class TabId {
         VARIABLES,
+        CUSTOMIZATIONS,
         RESULT
     }
 
@@ -98,6 +100,9 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, ToolWindowManagerListener,
     private lateinit var variablesLoadFromFile: JCheckBox
     private lateinit var variablesSelectedFile: TextFieldWithBrowseButton
     private lateinit var variablesFileStatus: JLabel
+
+    private lateinit var customizationsCustomFilters: JCheckBox
+    private lateinit var customizationsCustomTests: JCheckBox
 
     private lateinit var resultPlainTextView: EditorTextField
     private val resultHtmlView = JCEFHtmlPanel("about:blank")
@@ -258,6 +263,58 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, ToolWindowManagerListener,
         )
     }
 
+    private fun createCustomizationsTab(): Tab {
+        return Tab(
+            CUSTOMIZATIONS,
+            message("toolwindow.tab.customizations"),
+            AllIcons.General.Settings,
+            panel {
+                row {
+                    customizationsCustomFilters = checkBox(message("toolwindow.tab.customizations.filters.checkbox"))
+                        .applyToComponent { isSelected = projectSettings::useCustomFilters.get() }
+                        .onChanged { projectSettings.useCustomFilters = customizationsCustomFilters.isSelected }
+                        .component
+
+                    textFieldWithBrowseButton()
+                        .resizableColumn()
+                        .align(AlignX.FILL)
+                        .comment(message("toolwindow.tab.customizations.filters.comment"))
+                        .enabledIf(customizationsCustomFilters.selected)
+                        .applyToComponent {
+                            isEditable = false
+                            text = projectSettings.customFiltersFilePath
+                        }
+                        .onChanged { projectSettings.customFiltersFilePath = it.text }
+                        .component
+                }
+
+                row {
+                    customizationsCustomTests = checkBox(message("toolwindow.tab.customizations.tests.checkbox"))
+                        .applyToComponent { isSelected = projectSettings::useCustomTests.get() }
+                        .onChanged { projectSettings.useCustomTests = customizationsCustomTests.isSelected }
+                        .component
+
+                    textFieldWithBrowseButton()
+                        .resizableColumn()
+                        .align(AlignX.FILL)
+                        .comment(message("toolwindow.tab.customizations.tests.comment"))
+                        .enabledIf(customizationsCustomTests.selected)
+                        .applyToComponent {
+                            isEditable = false
+                            text = projectSettings.customTestsFilePath
+                        }
+                        .onChanged { projectSettings.customTestsFilePath = it.text }
+                        .component
+                }
+
+                row {
+                    text(message("toolwindow.tab.customizations.readme.comment", "https://github.com/4ch1m/intellij-quick-jinja?tab=readme-ov-file#custom-filterstests"))
+                }
+            },
+            message("toolwindow.tab.customizations.tip")
+        )
+    }
+
     private fun createResultTab(project: Project): Tab {
         val resultPlainTextViewActive = AtomicBooleanProperty(projectSettings.resultViewMode == PLAIN_TEXT)
         val resultHtmlViewActive = AtomicBooleanProperty(projectSettings.resultViewMode == HTML)
@@ -340,6 +397,7 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, ToolWindowManagerListener,
 
         tabs = listOf(
             createVariablesTab(project),
+            createCustomizationsTab(),
             createResultTab(project)
         )
 
@@ -620,6 +678,8 @@ class QuickJinjaToolWindowFactory: ToolWindowFactory, ToolWindowManagerListener,
         val pythonScript = QuickJinjaPython.createScriptFile(
             templateFile = templateFile,
             variablesFile = generateFileFromVariables(),
+            customFiltersFile = if (projectSettings.useCustomFilters) File(projectSettings.customFiltersFilePath) else null,
+            customTestsFile = if (projectSettings.useCustomTests) File(projectSettings.customTestsFilePath) else null,
             options = appSettings.getJinjaOptions(),
             fileSystemLoaderPaths = listOfNotNull(project.basePath, Paths.get(templateFilePath.text).parent.toString())
         )

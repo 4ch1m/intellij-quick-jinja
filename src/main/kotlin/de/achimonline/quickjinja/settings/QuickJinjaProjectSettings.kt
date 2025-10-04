@@ -18,5 +18,9 @@ data class QuickJinjaProjectSettings(
     var loadVariablesFromFile: Boolean = false,
     var variablesFilePath: String = "",
     var resultViewMode: ResultViewMode = ResultViewMode.PLAIN_TEXT,
-    var templateSource: TemplateSource = TemplateSource.FILE
+    var templateSource: TemplateSource = TemplateSource.FILE,
+    var useCustomFilters: Boolean = false,
+    var customFiltersFilePath: String = "",
+    var useCustomTests: Boolean = false,
+    var customTestsFilePath: String = ""
 )
