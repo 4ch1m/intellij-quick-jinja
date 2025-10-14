@@ -1,3 +1,8 @@
+## [1.8.1]
+
+### Changed
+- dependency updates
+
 ## [1.8.0]
 
 ### Added
