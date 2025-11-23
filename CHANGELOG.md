@@ -1,3 +1,10 @@
+## [1.8.2]
+
+### Changed
+- minor improvements in settings dialog
+- Gradle-wrapper update
+- dependency updates
+
 ## [1.8.1]
 
 ### Changed

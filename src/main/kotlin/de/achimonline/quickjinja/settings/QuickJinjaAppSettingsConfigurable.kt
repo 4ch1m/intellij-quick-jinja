@@ -1,6 +1,7 @@
 package de.achimonline.quickjinja.settings
 
 import com.intellij.icons.AllIcons
+import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.observable.properties.AtomicBooleanProperty
 import com.intellij.openapi.options.BoundConfigurable
 import com.intellij.openapi.ui.DialogPanel
@@ -46,7 +47,9 @@ class QuickJinjaAppSettingsConfigurable : BoundConfigurable(message("settings.di
         return panel {
             group(message("settings.group.executable")) {
                 row {
-                    executable = textFieldWithBrowseButton()
+                    executable = textFieldWithBrowseButton(
+                        fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileOrExecutableAppDescriptor()
+                    )
                         .resizableColumn()
                         .align(AlignX.FILL)
                         .label(message("settings.group.executable.command"))
