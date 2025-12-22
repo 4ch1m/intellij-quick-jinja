@@ -8,9 +8,9 @@ group = property("pluginGroup")
 version = property("pluginVersion")
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "2.2.21"
+    id("org.jetbrains.kotlin.jvm") version "2.3.0"
     id("org.jetbrains.intellij.platform") version "2.10.4"
-    id("org.jetbrains.changelog") version "2.4.0"
+    id("org.jetbrains.changelog") version "2.5.0"
     id("com.github.ben-manes.versions") version "0.53.0"
 }
 
@@ -24,11 +24,7 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        create(
-            providers.gradleProperty("platformType"),
-            providers.gradleProperty("platformVersion")
-        )
-
+        intellijIdea(providers.gradleProperty("platformVersion"))
         pluginVerifier()
         zipSigner()
         testFramework(TestFrameworkType.Platform)

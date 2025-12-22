@@ -1,3 +1,12 @@
+## [1.8.3]
+
+### Fixed
+- path-handling for import of custom filters and tests  
+  (didn't work with Windows paths using backslashes)
+
+### Changed
+- dependency updates
+
 ## [1.8.2]
 
 ### Changed
