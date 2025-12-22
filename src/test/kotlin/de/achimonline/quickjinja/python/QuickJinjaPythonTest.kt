@@ -164,12 +164,12 @@ class QuickJinjaPythonTest {
                 ...
 
             try:
-                environment.filters.update(import_from_path('quick_jinja_custom_filters', '${filtersFile.absolutePath}').filters())
+                environment.filters.update(import_from_path('quick_jinja_custom_filters', r'${filtersFile.absolutePath}').filters())
             except:
                 ...
             
             try:
-                environment.tests.update(import_from_path('quick_jinja_custom_tests', '${testsFile.absolutePath}').tests())
+                environment.tests.update(import_from_path('quick_jinja_custom_tests', r'${testsFile.absolutePath}').tests())
             except:
                 ...
             

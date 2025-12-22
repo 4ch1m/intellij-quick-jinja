@@ -67,7 +67,7 @@ class QuickJinjaPython {
                 scriptFileContent += """${System.lineSeparator()}
 
                     try:
-                        environment.filters.update(import_from_path('quick_jinja_custom_filters', '${customFiltersFile.absolutePath}').filters())
+                        environment.filters.update(import_from_path('quick_jinja_custom_filters', r'${customFiltersFile.absolutePath}').filters())
                     except:
                         ...
                 """.trimIndent()
@@ -77,7 +77,7 @@ class QuickJinjaPython {
                 scriptFileContent += """${System.lineSeparator()}
 
                     try:
-                        environment.tests.update(import_from_path('quick_jinja_custom_tests', '${customTestsFile.absolutePath}').tests())
+                        environment.tests.update(import_from_path('quick_jinja_custom_tests', r'${customTestsFile.absolutePath}').tests())
                     except:
                         ...
                 """.trimIndent()
