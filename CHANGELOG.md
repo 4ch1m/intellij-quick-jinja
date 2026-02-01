@@ -1,3 +1,9 @@
+## [1.8.4]
+
+### Changed
+- dependency updates
+- Gradle-wrapper update
+
 ## [1.8.3]
 
 ### Fixed

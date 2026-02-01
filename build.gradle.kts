@@ -9,7 +9,7 @@ version = property("pluginVersion")
 
 plugins {
     id("org.jetbrains.kotlin.jvm") version "2.3.0"
-    id("org.jetbrains.intellij.platform") version "2.10.4"
+    id("org.jetbrains.intellij.platform") version "2.11.0"
     id("org.jetbrains.changelog") version "2.5.0"
     id("com.github.ben-manes.versions") version "0.53.0"
 }
@@ -39,7 +39,7 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(property("kotlinJvmTarget").toInt())
+    jvmToolchain(property("kotlin.jvm.target").toInt())
 }
 
 intellijPlatform {
