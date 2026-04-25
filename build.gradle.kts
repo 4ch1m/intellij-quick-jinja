@@ -8,10 +8,10 @@ group = property("pluginGroup")
 version = property("pluginVersion")
 
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "2.3.0"
-    id("org.jetbrains.intellij.platform") version "2.11.0"
+    id("org.jetbrains.kotlin.jvm") version "2.3.21"
+    id("org.jetbrains.intellij.platform") version "2.15.0"
     id("org.jetbrains.changelog") version "2.5.0"
-    id("com.github.ben-manes.versions") version "0.53.0"
+    id("com.github.ben-manes.versions") version "0.54.0"
 }
 
 repositories {
@@ -30,8 +30,8 @@ dependencies {
         testFramework(TestFrameworkType.Platform)
     }
 
-    implementation("com.google.code.gson:gson:2.13.2")
-    implementation("org.yaml:snakeyaml:2.5")
+    implementation("com.google.code.gson:gson:2.14.0")
+    implementation("org.yaml:snakeyaml:2.6")
 
     testImplementation(kotlin("test"))
 
