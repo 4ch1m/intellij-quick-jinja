@@ -1,20 +1,30 @@
 # Changelog
 
-## 1.8.5
+## Unreleased
+
+## 1.9.0 - 2026-07-18
+
+### Changed
+
+- required IDE version >= `2026.2`
+- Gradle-wrapper update
+- dependency updates
+
+## 1.8.5 - 2026-04-25
 
 ### Changed
 
 - dependency updates
 - Gradle-wrapper update
 
-## 1.8.4
+## 1.8.4 - 2026-02-01
 
 ### Changed
 
 - dependency updates
 - Gradle-wrapper update
 
-## 1.8.3
+## 1.8.3 - 2025-12-22
 
 ### Fixed
 
@@ -25,7 +35,7 @@
 
 - dependency updates
 
-## 1.8.2
+## 1.8.2 - 2025-11-23
 
 ### Changed
 
@@ -33,13 +43,13 @@
 - Gradle-wrapper update
 - dependency updates
 
-## 1.8.1
+## 1.8.1 - 2025-10-14
 
 ### Changed
 
 - dependency updates
 
-## 1.8.0
+## 1.8.0 - 2025-10-04
 
 ### Added
 
@@ -54,14 +64,14 @@
 - Gradle-wrapper update
 - dependency updates
 
-## 1.7.1
+## 1.7.1 - 2025-08-08
 
 ### Changed
 
 - Gradle-wrapper update
 - dependency updates
 
-## 1.7.0
+## 1.7.0 - 2025-04-23
 
 ### Fixed
 
@@ -73,14 +83,14 @@
 - Gradle-wrapper update
 - dependency updates
 
-## 1.6.1
+## 1.6.1 - 2025-02-16
 
 ### Changed
 
 - Gradle-wrapper update
 - dependency updates
 
-## 1.6.0
+## 1.6.0 - 2024-12-14
 
 ### Added
 
@@ -91,7 +101,7 @@
 - Gradle-wrapper update
 - dependency updates
 
-## 1.5.2
+## 1.5.2 - 2024-09-25
 
 ### Fixed
 
@@ -103,13 +113,13 @@
 - Gradle-wrapper update
 - dependency updates
 
-## 1.5.1
+## 1.5.1 - 2024-08-27
 
 ### Fixed
 
 - improved compatibility with older Python versions (< `3.10`)
 
-## 1.5.0
+## 1.5.0 - 2024-08-22
 
 ### Changed
 
@@ -118,7 +128,7 @@
 - Gradle-wrapper update
 - dependency updates
 
-## 1.4.0
+## 1.4.0 - 2024-08-12
 
 ### Changed
 
@@ -126,7 +136,7 @@
 - minor code improvements
 - Gradle-wrapper update
 
-## 1.3.0
+## 1.3.0 - 2024-08-10
 
 ### Fixed
 
@@ -139,13 +149,13 @@
 - Gradle-wrapper update
 - dependency updates
 
-## 1.2.1
+## 1.2.1 - 2024-08-10
 
 ### Fixed
 
 - issues with IntelliJ `2024.2` (improved toolbar initialization; removed "empty" icon resource)
 
-## 1.2.0
+## 1.2.0 - 2024-07-28
 
 ### Added
 
@@ -157,13 +167,13 @@
 
 - Gradle-wrapper update
 
-## 1.1.0
+## 1.1.0 - 2024-07-22
 
 ### Fixed
 
 - internal file path handling (should work on Windows now as well)
 
-## 1.0.0
+## 1.0.0 - 2024-07-14
 
 ### Added
 
