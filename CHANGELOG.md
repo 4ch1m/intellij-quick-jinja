@@ -10,6 +10,10 @@
 - Gradle-wrapper update
 - dependency updates
 
+### Fixed
+
+- plugin incompatibilities with `2026.2` (`JCEF` module)
+
 ## 1.8.5 - 2026-04-25
 
 ### Changed
